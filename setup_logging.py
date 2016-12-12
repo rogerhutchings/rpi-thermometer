@@ -9,8 +9,8 @@ def setup_logging(
     default_level=logging.INFO,
     env_key='LOG_CFG'
 ):
-    """Setup logging configuration
-
+    """
+    Setup logging configuration
     """
     path = default_path
     value = os.getenv(env_key, None)
@@ -22,4 +22,3 @@ def setup_logging(
         logging.config.dictConfig(config)
     else:
         logging.basicConfig(level=default_level)
-

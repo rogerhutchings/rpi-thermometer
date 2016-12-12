@@ -15,18 +15,18 @@ LM75_CONF_OS_F_QUE = 3
 
 
 class LM75(object):
-  def __init__(self, mode=LM75_CONF_OS_COMP_INT, address=LM75_ADDRESS, busnum=1):
-    self._mode = mode
-    self._address = address
-    self._bus = smbus.SMBus(busnum)
+    def __init__(self, mode=LM75_CONF_OS_COMP_INT, address=LM75_ADDRESS, busnum=1):
+        self._mode = mode
+        self._address = address
+        self._bus = smbus.SMBus(busnum)
 
-  def regdata2float (self, regdata):
-    return (regdata / 32.0) / 8.0
-  
-  def toFah(self, temp):
-    return (temp * (9.0/5.0)) + 32.0
+    def regdata2float (self, regdata):
+        return (regdata / 32.0) / 8.0
 
-  def getTemp(self):
-    raw = self._bus.read_word_data(self._address, LM75_TEMP_REGISTER) & 0xFFFF
-    raw = ((raw << 8) & 0xFF00) + (raw >> 8)
-    return self.regdata2float(raw)
+    def toFah(self, temp):
+        return (temp * (9.0/5.0)) + 32.0
+
+    def getTemp(self):
+        raw = self._bus.read_word_data(self._address, LM75_TEMP_REGISTER) & 0xFFFF
+        raw = ((raw << 8) & 0xFF00) + (raw >> 8)
+        return self.regdata2float(raw)
