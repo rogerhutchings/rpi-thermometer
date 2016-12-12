@@ -36,11 +36,10 @@ def postDataToThingSpeak(config, field, value, label):
 
 def main():
     logger = logging.getLogger(__name__)
-    sensor = LM75.LM75()
-
     logger.info("Thermometer logger started")
-    config = loadConfig()
 
+    sensor = LM75.LM75()
+    config = loadConfig()
     temp = "field1", sensor.getTemp(), "temperature"
     logger.info("Current %s is %s", temp[2], temp[1])
     postDataToThingSpeak(config, *temp)
