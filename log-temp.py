@@ -8,35 +8,42 @@ import yaml
 
 import setup_logging
 
-# logging.basicConfig(filename="thermometer.log", level=logging.INFO)
-
-# os.chdir(os.path.dirname(__file__))
+setup_logging.setup_logging()
 
 def loadConfig():
   logger = logging.getLogger(__name__)
+  logger.debug("Trying to load config...")
   try: 
     with open("config.yml", "r") as ymlfile:
+      logger.debug("Config loaded")
       return yaml.load(ymlfile)
   except OSError as e:
     logger.error(e)
 
-def postData(config, temp):
+def postDataToThingSpeak(config, field, value, label):
+  logger = logging.getLogger(__name__)
   ts_config = config['thingspeak']
-  payload = {'api_key': ts_config['api_key'], 'field1': str(temp)}
-  r = requests.post(ts_config['url'] + '.json', data=payload)
-  print(r.json())
+  url = ts_config['url'] + '.json'
+
+  payload = {'api_key': ts_config['api_key'], field: str(value)}
+  
+  logger.info("Posting %s to %s", label, url)
+  r = requests.post(url, data=payload)
+  if r.status_code == requests.codes.ok:
+    logger.info("Successfully posted %s", label)
+  else:
+    r.raise_for_status()
 
 def main():
-  setup_logging.setup_logging()
   logger = logging.getLogger(__name__)
+  sensor = LM75.LM75()
 
   logger.info('Thermometer logger started')
   config = loadConfig()
-  sensor = LM75.LM75()
-  temp = sensor.getTemp()
-  # postData(config, temp)
+
+  temp = "field1", sensor.getTemp(), "temperature"
+  logger.info("Current %s is %s", temp[2], temp[1])
+  postDataToThingSpeak(config, *temp)
 
 if __name__=="__main__":
    main()
-
-
